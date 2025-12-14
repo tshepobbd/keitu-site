@@ -7,11 +7,29 @@ frontend:
     build:
       commands:
         - npm run build
-        - echo '{"version":1,"routes":[],"hasServerComponents":false}' > out/required-server-files.json
-        - mkdir -p out/.next
-        - echo '[]' > out/.next/trace
-        - echo '[]' > out/server-trace.json
-        - ls -la out/ || echo "out directory listing failed"
+        - |
+          # Create required-server-files.json with proper structure
+          cat > out/required-server-files.json << EOF
+          {
+            "version": 1,
+            "routes": [],
+            "hasServerComponents": false,
+            "hasMiddleware": false
+          }
+          EOF
+          # Create .next directory structure
+          mkdir -p out/.next
+          # Create trace files - empty array format
+          echo '[]' > out/.next/trace
+          echo '[]' > out/server-trace.json
+          # Also create in root of out directory
+          echo '[]' > out/trace
+          # Set proper permissions
+          chmod 644 out/required-server-files.json out/.next/trace out/server-trace.json out/trace 2>/dev/null || true
+          # Verify all files
+          echo "=== Verifying trace files ==="
+          ls -la out/.next/ 2>/dev/null || echo ".next directory not found"
+          ls -la out/*.json out/trace 2>/dev/null || echo "Trace files not found in root"
   artifacts:
     baseDirectory: out
     files:
