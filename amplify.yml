@@ -8,6 +8,10 @@ frontend:
       commands:
         - npm run build
         - echo '{"version":1,"routes":[],"hasServerComponents":false}' > out/required-server-files.json
+        - mkdir -p out/.next
+        - echo '[]' > out/.next/trace
+        - echo '[]' > out/server-trace.json
+        - ls -la out/ || echo "out directory listing failed"
   artifacts:
     baseDirectory: out
     files:
